@@ -12,4 +12,14 @@ enum OrderStatusEnum: string
     {
         return $this === OrderStatusEnum::Completed;
     }
+
+    public function isCancelled(): bool
+    {
+        return $this === OrderStatusEnum::Canceled;
+    }
+
+    public function isPending(): bool
+    {
+        return $this === OrderStatusEnum::Pending;
+    }
 }
