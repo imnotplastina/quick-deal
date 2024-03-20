@@ -17,11 +17,9 @@ class OrderService
         if ($customer->balance >= $order->amount->value()) {
             DB::Transaction(function() use ($customer, $order) {
                 $customer->update([
-                    'balance' => new AmountValue(
-                        (double) $customer->balance->value()
-                        - (double) $order->amount->value()
-                    ),
-                ]);
+                    'balance' => $customer->balance->sub(
+                        $order->amount->value()
+                    )]);
 
                 $order->update([
                     'status' => OrderStatusEnum::Completed,
@@ -43,9 +41,8 @@ class OrderService
         if ($order->status->isCompleted()) {
             DB::Transaction(function () use ($order) {
                 $order->customer->update([
-                    'balance' => new AmountValue(
-                        (double) $order->customer->balance->value()
-                        + (double) $order->amount->value()
+                    'balance' => $order->customer->balance->add(
+                            $order->amount->value()
                     )]);
 
                 $order->update([

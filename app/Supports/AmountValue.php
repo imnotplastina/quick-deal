@@ -7,7 +7,7 @@ use Illuminate\Contracts\Database\Eloquent\Castable;
 final class AmountValue implements Castable
 {
     public function __construct(
-        private readonly string $value
+        public readonly string $value
     ) {
         if (! is_numeric($value)) {
             throw new \InvalidArgumentException(
@@ -20,6 +20,18 @@ final class AmountValue implements Castable
     {
         return $this->value;
     }
+
+    public function add(string $amount): self
+    {
+        return new self(bcadd($this->value, $amount));
+    }
+
+    public function sub(string $amount): self
+    {
+        return new self(bcsub($this->value, $amount));
+    }
+
+    /* todo eq, gt, gte etc methods */
 
     public static function castUsing(array $arguments): string
     {

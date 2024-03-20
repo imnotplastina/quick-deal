@@ -16,8 +16,8 @@ class CustomerController extends Controller
         $customer = $request->user();
 
         $customer->update([
-            'balance' => new AmountValue(
-                $customer->balance->value() + $request->validated('amount')
+            'balance' => $customer->balance->add(
+                $request->validated('amount')
             )]);
 
         return new CustomerResource($customer);
