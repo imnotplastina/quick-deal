@@ -9,33 +9,28 @@ use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
-    public function completeOrder(Order $order)
+    public function completeOrder(Order $order): Order
     {
         $customer = $order->customer;
 
-        // Если у покупателя достаточно средств на счету, то списываем нужную сумму и завершаем заказ
-        if ($customer->balance >= $order->amount->value()) {
-            DB::Transaction(function() use ($customer, $order) {
-                $customer->update([
-                    'balance' => $customer->balance->sub(
-                        $order->amount->value()
-                    )]);
+        DB::Transaction(function() use ($customer, $order) {
+            $customer->update([
+                'balance' => $customer->balance->sub(
+                    $order->amount->value()
+                )]);
 
-                $order->update([
-                    'status' => OrderStatusEnum::Completed,
-                ]);
+            $order->update([
+                'status' => OrderStatusEnum::Completed,
+            ]);
 
-                // Удаляем товары из корзины, поскольку заказ завершен
-                $customer->cart->products()->detach();
-            });
+            // Удаляем товары из корзины, поскольку заказ завершен
+            $customer->cart->products()->detach();
+        });
 
-        } else {
-            // Здесь должно быть сообщение о нехватке средств на счету
-            return response()->noContent();
-        }
+        return $order;
     }
 
-    public function cancelOrder(Order $order): void
+    public function cancelOrder(Order $order): Order
     {
         // Если товар уже оплачен, то возвращаем средства обратно
         if ($order->status->isCompleted()) {
@@ -50,5 +45,7 @@ class OrderService
                 ]);
             });
         }
+
+        return $order;
     }
 }
