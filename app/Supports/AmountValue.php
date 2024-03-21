@@ -31,7 +31,20 @@ final class AmountValue implements Castable
         return new self(bcsub($this->value, $amount));
     }
 
-    /* todo eq, gt, gte etc methods */
+    public function eq(string $amount): bool
+    {
+        return (bccomp($this->value, $amount) === 0);
+    }
+
+    public function gt(string $amount): bool
+    {
+        return (bccomp($this->value, $amount) === 1);
+    }
+
+    public function gte(string $amount): bool
+    {
+        return $this->eq($amount) || $this->gt($amount);
+    }
 
     public static function castUsing(array $arguments): string
     {
