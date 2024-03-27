@@ -12,7 +12,7 @@ class ProductController extends Controller
     public function __invoke(): AnonymousResourceCollection
     {
         return ProductResource::collection(
-            Product::sorted()->get()
+            Product::sorted()->paginate(24)
         );
     }
 }
