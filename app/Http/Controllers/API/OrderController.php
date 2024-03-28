@@ -17,16 +17,19 @@ class OrderController extends Controller
 {
     public function create(CartService $service, Request $request): OrderResource
     {
+        $products = $request->user()->cart->products;
+
+        /** @var Order $order */
         $order = Order::query()->create([
             'uuid' => Str::uuid(),
             'customer_id' => $request->user()->id,
             'status' => OrderStatusEnum::Pending,
             'amount' => new AmountValue(
-                $service->calculateTotalPrice(
-                    $request->user()->cart->products
-                )
+                $service->calculateTotalPrice($products)
             ),
         ]);
+
+        $order->products()->attach($products);
 
         return new OrderResource($order);
     }
