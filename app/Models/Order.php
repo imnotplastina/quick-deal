@@ -7,6 +7,7 @@ use App\Supports\AmountValue;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property AmountValue $amount
@@ -28,5 +29,10 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class);
     }
 }
